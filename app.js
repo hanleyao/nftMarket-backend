@@ -27,7 +27,7 @@ app.post('/upload', (req,res)=>{
     const file = req.files.file;
     const filename = file.name;
     const filePath = "files/"+filename;
-    const address = req.body.address;
+    
 
     file.mv(filePath, async (err) =>{
         if(err){
@@ -47,7 +47,7 @@ app.post('/upload', (req,res)=>{
         const metadataCid = metadataResult.cid.toString();
         console.log(metadataCid);
 
-        const userAddress = address || process.env.ADDRESS;
+        const userAddress = process.env.ADDRESS;
         await mint(userAddress)
 
         res.json({
