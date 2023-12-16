@@ -1,5 +1,6 @@
 
 import express from 'express';
+import cors from 'cors';
 import bodyParser from 'body-parser';
 import fileUpload from 'express-fileupload';
 import { uploadFileToIPFS,uploadJsonToIPFS } from './ipfs-uploader.js';
@@ -11,6 +12,7 @@ const app = express();
 app.set('view engine','ejs');
 app.set(bodyParser.urlencoded({ extended:true}));
 app.use(fileUpload());
+app.use(cors());
 
 app.get('/',(req,res) => {
     res.render("home");
@@ -25,6 +27,7 @@ app.post('/upload', (req,res)=>{
     const file = req.files.file;
     const filename = file.name;
     const filePath = "files/"+filename;
+    const address = req.body.address;
 
     file.mv(filePath, async (err) =>{
         if(err){
@@ -44,7 +47,7 @@ app.post('/upload', (req,res)=>{
         const metadataCid = metadataResult.cid.toString();
         console.log(metadataCid);
 
-        const userAddress = process.env.ADDRESS;
+        const userAddress = address || process.env.ADDRESS;
         await mint(userAddress)
 
         res.json({
